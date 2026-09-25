@@ -51,4 +51,9 @@ jobs:
             go build -ldflags="-H windowsgui -X main.appVersion=${VERSION}" \
             -trimpath -o MetaDesk.exe .
           rm -f "MetaDesk-Windows-x64.zip"
-          zip -q MetaDesk-Windows-x64.zip MetaDesk.exe
+          if command -v zip >/dev/null 2>&1; then
+            zip -q MetaDesk-Windows-x64.zip MetaDesk.exe
+          else
+            powershell.exe -NoProfile -Command "Compress-Archive -Path MetaDesk.exe -DestinationPath MetaDesk-Windows-x64.zip -Force"
+          fi
+          ls -la MetaDesk.exe MetaDesk-Windows-x64.zip
