@@ -1582,6 +1582,16 @@ func getInitScript(ua string) string {
 
 		// Memory Optimization: Idle Garbage Collection
 		waRunModule('memory-opt', function() {
+			// Hemat RAM tanpa unload: tiap pindah layanan (dock click / Ctrl+1/2/3),
+			// halaman LAMA dibekukan dulu sebelum navigasi — timer, video, dan
+			// animasi berhenti, jadi renderer lama melepas CPU/surface selagi
+			// halaman baru loading. Sesi login tetap aman (cookie/storage utuh).
+			window.__mdFreezeBeforeSwitch = function() {
+				try {
+					document.querySelectorAll('video, audio').forEach(function(m) { try { m.pause(); } catch (e) {} });
+					if (window.releaseMemoryNative) { try { window.releaseMemoryNative(); } catch (e) {} }
+				} catch (e) {}
+			};
 			var releaseTimer = null;
 			document.addEventListener('visibilitychange', function() {
 				clearTimeout(releaseTimer);
@@ -4364,6 +4374,7 @@ func getInitScript(ua string) string {
 				b.onclick = function(e) {
 					try {
 						if (e) { e.preventDefault(); e.stopPropagation(); }
+						if (window.__mdFreezeBeforeSwitch) { try { window.__mdFreezeBeforeSwitch(); } catch (x) {} }
 						var map = {whatsapp:'https://web.whatsapp.com', instagram:'https://www.instagram.com', facebook:'https://www.facebook.com'};
 						if (map[it.id]) { window.location.assign(map[it.id]); }
 					} catch (err) {}
@@ -4398,6 +4409,7 @@ func getInitScript(ua string) string {
 					else if (e.key === '3') id = 'facebook';
 					if (id) {
 						e.preventDefault();
+						if (window.__mdFreezeBeforeSwitch) { try { window.__mdFreezeBeforeSwitch(); } catch (x) {} }
 						var map2 = {whatsapp:'https://web.whatsapp.com', instagram:'https://www.instagram.com', facebook:'https://www.facebook.com'};
 						if (map2[id]) { window.location.assign(map2[id]); }
 					}
