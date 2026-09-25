@@ -1,5 +1,4 @@
 name: Windows build
-
 on:
   push:
     tags:
@@ -10,20 +9,16 @@ on:
         description: "Release version, without the v prefix"
         required: false
         type: string
-
 permissions:
   contents: write
-
 jobs:
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-go@v5
         with:
           go-version: "1.26"
-
       - name: Resolve version
         id: version
         shell: bash
@@ -41,7 +36,6 @@ jobs:
           }
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Building MetaDesk v${VERSION}"
-
       - name: Build Windows binary
         shell: bash
         env:
@@ -57,3 +51,34 @@ jobs:
             powershell.exe -NoProfile -Command "Compress-Archive -Path MetaDesk.exe -DestinationPath MetaDesk-Windows-x64.zip -Force"
           fi
           ls -la MetaDesk.exe MetaDesk-Windows-x64.zip
+          - name: Install NSIS
+          shell: pwsh
+          run: choco install nsis -y
+      - name: Build installer (if NSIS available)
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if command -v makensis >/dev/null 2>&1; then
+            makensis "-DVERSION=${VERSION}" installer/windows/MetaDesk.nsi
+            ls -la MetaDesk-Windows-x64-Setup.exe
+          else
+            echo "::warning::makensis not found, skipping Setup.exe"
+          fi
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            MetaDesk.exe
+            MetaDesk-Windows-x64.zip
+            MetaDesk-Windows-x64-Setup.exe
+      - name: Attach to GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            MetaDesk.exe
+            MetaDesk-Windows-x64.zip
+            MetaDesk-Windows-x64-Setup.exe
