@@ -4394,7 +4394,7 @@ func getInitScript(ua string) string {
 					if (!document.getElementById('metadesk-dock-style')) {
 						var st = document.createElement('style');
 						st.id = 'metadesk-dock-style';
-						st.textContent = '#metadesk-dock{position:fixed !important;}'+ 'body{margin-left:48px !important;padding-left:0 !important;width:calc(100% - 48px) !important;box-sizing:border-box !important;}'+ '#app,#root,[id^="mount"],div[data-visualcompletion]{max-width:100% !important;}';
+						st.textContent = '#metadesk-dock{position:fixed !important;top:0;left:0;bottom:0;width:48px;z-index:2147483647;}'+ 'html,body{margin:0 !important;padding:0 !important;}'+ 'body{padding-left:48px !important;box-sizing:border-box !important;}'+ '#app,div#app{position:relative !important;left:48px !important;margin-left:0 !important;margin-right:0 !important;width:calc(100vw - 48px) !important;max-width:calc(100vw - 48px) !important;box-sizing:border-box !important;}'+ '#root,[id^="mount"],div[data-visualcompletion]{max-width:100% !important;}';
 						document.head.appendChild(st);
 					}
 				} catch (err) {}
