@@ -635,7 +635,7 @@ func getInitScript(ua string) string {
 			if (target && target.tagName === 'A' && target.href) {
 				try {
 					var url = new URL(target.href);
-					if (!url.hostname.endsWith('whatsapp.com') && !url.hostname.endsWith('whatsapp.net') && (url.protocol === 'http:' || url.protocol === 'https:')) {
+					if (!url.hostname.endsWith('whatsapp.com') && !url.hostname.endsWith('whatsapp.net') && !url.hostname.endsWith('instagram.com') && !url.hostname.endsWith('cdninstagram.com') && !url.hostname.endsWith('facebook.com') && !url.hostname.endsWith('facebook.net') && !url.hostname.endsWith('fbcdn.net') && !url.hostname.endsWith('fb.com') && !url.hostname.endsWith('fbsbx.com') && (url.protocol === 'http:' || url.protocol === 'https:')) {
 						e.preventDefault();
 						e.stopPropagation();
 						if (window.openExternalLink) {
@@ -1510,7 +1510,7 @@ func getInitScript(ua string) string {
 				}
 				try {
 					var parsed = new URL(url, window.location.href);
-					if (!parsed.hostname.endsWith('whatsapp.com') && !parsed.hostname.endsWith('whatsapp.net') && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
+					if (!parsed.hostname.endsWith('whatsapp.com') && !parsed.hostname.endsWith('whatsapp.net') && !parsed.hostname.endsWith('instagram.com') && !parsed.hostname.endsWith('cdninstagram.com') && !parsed.hostname.endsWith('facebook.com') && !parsed.hostname.endsWith('facebook.net') && !parsed.hostname.endsWith('fbcdn.net') && !parsed.hostname.endsWith('fb.com') && !parsed.hostname.endsWith('fbsbx.com') && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
 						if (window.openExternalLink) {
 							window.openExternalLink(parsed.href);
 							return null;
@@ -4378,7 +4378,7 @@ func getInitScript(ua string) string {
 					if (!document.getElementById('metadesk-dock-style')) {
 						var st = document.createElement('style');
 						st.id = 'metadesk-dock-style';
-						st.textContent = 'body{padding-left:48px !important;}';
+						st.textContent = '#metadesk-dock{position:fixed !important;}'+ 'body{margin-left:48px !important;padding-left:0 !important;width:calc(100% - 48px) !important;box-sizing:border-box !important;}'+ '#app,#root,[id^="mount"],div[data-visualcompletion]{max-width:100% !important;}';
 						document.head.appendChild(st);
 					}
 				} catch (err) {}
