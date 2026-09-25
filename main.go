@@ -4349,7 +4349,7 @@ func getInitScript(ua string) string {
 			rail.id = 'metadesk-dock';
 			rail.setAttribute('role', 'navigation');
 			rail.setAttribute('aria-label', 'MetaDesk services');
-			rail.style.cssText = 'position:fixed;top:0;left:0;bottom:0;width:48px;z-index:2147483647;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0;background:#111b21;border-right:1px solid rgba(134,150,160,.25);';
+			rail.style.cssText = 'position:fixed;top:0;left:0;bottom:0;width:48px;z-index:2147483647;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0;background:#111b21;border-right:1px solid rgba(134,150,160,.25);transform:translateX(-42px);opacity:0.35;transition:transform 0.18s ease,opacity 0.18s ease;';
 			var host = (location.hostname || '').toLowerCase();
 			function activeId() {
 				if (host.indexOf('instagram.com') >= 0) return 'instagram';
@@ -4394,7 +4394,7 @@ func getInitScript(ua string) string {
 					if (!document.getElementById('metadesk-dock-style')) {
 						var st = document.createElement('style');
 						st.id = 'metadesk-dock-style';
-						st.textContent = '#metadesk-dock{position:fixed !important;top:0;left:0;bottom:0;width:48px;z-index:2147483647;}'+ 'html,body{margin:0 !important;padding:0 !important;}'+ 'body{padding-left:48px !important;box-sizing:border-box !important;}'+ '#app,div#app{position:relative !important;left:48px !important;margin-left:0 !important;margin-right:0 !important;width:calc(100vw - 48px) !important;max-width:calc(100vw - 48px) !important;box-sizing:border-box !important;}'+ '#root,[id^="mount"],div[data-visualcompletion]{max-width:100% !important;}';
+						st.textContent = '#metadesk-dock:hover{transform:translateX(0) !important;opacity:1 !important;}';
 						document.head.appendChild(st);
 					}
 				} catch (err) {}
