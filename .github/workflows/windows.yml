@@ -30,8 +30,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
             VERSION="${GITHUB_REF_NAME#v}"
-          elif [ -n "${{ inputs.version }}" ]; then
+          elif [ -n "${{ inputs.version }}" ] && [ "${{ inputs.version }}" != "v*" ]; then
             VERSION="${{ inputs.version }}"
+            VERSION="${VERSION#v}"
           else
             VERSION="$(grep -oP 'var appVersion = \"\K[^\"]+' updater.go)"
           fi
