@@ -4364,21 +4364,8 @@ func getInitScript(ua string) string {
 				b.onclick = function(e) {
 					try {
 						if (e) { e.preventDefault(); e.stopPropagation(); }
-						var id = it.id;
-						if (typeof switchServiceNative === 'function') {
-							try {
-								var r = switchServiceNative(id);
-								if (r && typeof r.then === 'function') {
-									r.then(function(url) { if (url) { location.href = url; } });
-								} else if (typeof r === 'string' && r) {
-									location.href = r;
-								} else {
-									fallback(id);
-								}
-							} catch (err) { fallback(id); }
-						} else {
-							fallback(id);
-						}
+						var map = {whatsapp:'https://web.whatsapp.com', instagram:'https://www.instagram.com', facebook:'https://www.facebook.com'};
+						if (map[it.id]) { window.location.assign(map[it.id]); }
 					} catch (err) {}
 				};
 				rail.appendChild(b);
@@ -4411,8 +4398,8 @@ func getInitScript(ua string) string {
 					else if (e.key === '3') id = 'facebook';
 					if (id) {
 						e.preventDefault();
-						var btn = rail.querySelector('[data-service="' + id + '"]');
-						if (btn) { btn.click(); } else { fallback(id); }
+						var map2 = {whatsapp:'https://web.whatsapp.com', instagram:'https://www.instagram.com', facebook:'https://www.facebook.com'};
+						if (map2[id]) { window.location.assign(map2[id]); }
 					}
 				} catch (err) {}
 			});
