@@ -24,7 +24,9 @@ func getInitScript(ua string) string {
 		clientArch = "x86"
 	}
 
-	script := `
+	var script string
+	if true {
+		script = `
 		// --- Safe storage -------------------------------------------------
 		// localStorage throws (SecurityError) instead of returning null when
 		// the engine denies storage: WebView2 does this in InPrivate mode and
@@ -77,6 +79,11 @@ func getInitScript(ua string) string {
 		// API difference, a denied storage read) removes every enhancement
 		// defined after it.
 		function waRunModule(name, fn) {
+		var __MD_HOST = '';
+		try { __MD_HOST = (location.hostname || '').toLowerCase(); } catch (e) {}
+		function __MD_IS_WA() {
+			return __MD_HOST.indexOf('whatsapp') >= 0 || __MD_HOST === '';
+		}
 			try {
 				return fn();
 			} catch (e) {
@@ -251,6 +258,7 @@ func getInitScript(ua string) string {
 
 		// Robust HTML5 Media Autoplay & Inline Playback Support for Status/Stories and Videos
 		waRunModule('media-playback', function() {
+			if (!__MD_IS_WA()) return;
 			if (!window.HTMLMediaElement) return;
 
 			function prepareMedia(el) {
@@ -657,6 +665,7 @@ func getInitScript(ua string) string {
 		}
 
 		waRunModule('drag-drop-paste', function() {
+			if (!__MD_IS_WA()) return;
 			var dragCounter = 0;
 			var dropInProgress = false;
 
@@ -1523,6 +1532,7 @@ func getInitScript(ua string) string {
 
 		// Zoom Keyboard Shortcuts (Cmd + / Cmd - / Cmd 0)
 		waRunModule('zoom-shortcuts', function() {
+			if (!__MD_IS_WA()) return;
 			var currentZoom = 1.0;
 			window.addEventListener('keydown', function(e) {
 				if (e.metaKey || e.ctrlKey) {
@@ -1545,6 +1555,7 @@ func getInitScript(ua string) string {
 
 		// Dock Badge Unread Count Synchronizer
 		waRunModule('dock-badge', function() {
+			if (!__MD_IS_WA()) return;
 			var lastBadge = null;
 			function syncBadge() {
 				var title = document.title || '';
@@ -1739,6 +1750,7 @@ func getInitScript(ua string) string {
 
 		// Privacy Mode Toggle (Cmd + Shift + P)
 		waRunModule('privacy-mode', function() {
+			if (!__MD_IS_WA()) return;
 			var isPrivacyActive = false;
 			var styleEl = document.createElement('style');
 			styleEl.id = 'whatsapp-privacy-style';
@@ -2471,6 +2483,7 @@ func getInitScript(ua string) string {
 
 		// Dynamic Responsive Desktop Layout (enables seamless shrinking and expanding)
 		waRunModule('responsive-css', function() {
+			if (!__MD_IS_WA()) return;
 			var respStyle = document.createElement('style');
 			respStyle.id = 'metadesktop-responsive';
 			respStyle.textContent = '' +
@@ -2510,6 +2523,7 @@ func getInitScript(ua string) string {
 
 		// Native Spell Check for textareas (macOS NSSpellChecker, Windows ISpellCheckProvider, Linux GTK)
 		waRunModule('spellcheck', function() {
+			if (!__MD_IS_WA()) return;
 			var spellCheckEnabled = true;
 			var spellCheckLang = 'auto';
 
@@ -2612,6 +2626,7 @@ func getInitScript(ua string) string {
 
 		// Context Menu: Search/Translate selected text
 		waRunModule('context-menu', function() {
+			if (!__MD_IS_WA()) return;
 			var contextMenu = null;
 			var lastSelection = '';
 			var lastSelectionRect = null;
@@ -2722,6 +2737,7 @@ func getInitScript(ua string) string {
 
 		// Automatic Download & Document Preview Interceptor for Chat Files & Media
 		waRunModule('document-viewer', function() {
+			if (!__MD_IS_WA()) return;
 			var activeDownloadKeys = Object.create(null);
 			// Paths the saver has already reported in this session. The Go saver
 			// returns the path of an existing byte-identical file instead of
@@ -3033,6 +3049,7 @@ func getInitScript(ua string) string {
 		// the all-chats panel, check whether the same filename exists in the
 		// configured downloads folder and tag it with a small green check.
 		waRunModule('saved-badges', function() {
+			if (!__MD_IS_WA()) return;
 			var savedScanQueued = false;
 			var lastSavedScanAt = 0;
 			var savedCache = {};
@@ -3162,6 +3179,7 @@ func getInitScript(ua string) string {
 
 		// Theme Manager, In-Flow Header Toolbar Button & Control Center Modal
 		waRunModule('settings-modal', function() {
+			if (!__MD_IS_WA()) return;
 			var isMac = (__WA_GOOS === 'darwin') || (navigator.platform && navigator.platform.toUpperCase().indexOf('MAC') >= 0);
 			var currentTheme = 'dark';
 			var themeChoiceVersion = 0;
@@ -4405,7 +4423,9 @@ func getInitScript(ua string) string {
 			setTimeout(mount, 4000);
 		} catch (err) {}
 	});
-	` + "\n" + getOnboardingScript()
+	`
+	}
+	script += "\n" + getOnboardingScript()
 	// Single source of truth: every UI version string flows from appVersion
 	// (overridable at link time via -ldflags "-X main.appVersion=...").
 	return strings.ReplaceAll(script, "__WA_APP_VERSION__", appVersion)
