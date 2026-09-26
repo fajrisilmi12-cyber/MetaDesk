@@ -33,3 +33,8 @@ PRODUCT.md
 # Local-only (never publish)
 BENCHMARK_RESULTS.md
 WhatsAppDesk.entitlements
+
+# Python bytecode (harness helpers, wizard asset scripts)
+__pycache__/
+*.py[cod]
+*.class

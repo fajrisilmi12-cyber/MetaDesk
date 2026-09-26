@@ -425,7 +425,7 @@ func downloadFileWithProgress(url, destPath string, onProgress func(int)) error 
 // regression-tested on every development host. The batch itself runs only in
 // the Windows helper after the GUI process exits.
 func windowsUpdateBatch(pid int, newExePath, execPath string) string {
-	return fmt.Sprintf(`@echo off
+	batch := fmt.Sprintf(`@echo off
 setlocal
 set OLD_PID=%d
 set SRC=%s
@@ -464,6 +464,15 @@ start "" "%%DST%%"
 :cleanup
 del /f /q "%%~f0" >NUL 2>&1
 `, pid, newExePath, execPath)
+	// CMD parses multi-line label/goto scripts reliably only with CRLF.
+	// The raw literal above is LF-only, so normalize here (idempotent).
+	return normalizeBatchCRLF(batch)
+}
+
+// normalizeBatchCRLF converts LF to CRLF idempotently for Windows batch files.
+func normalizeBatchCRLF(s string) string {
+	s = strings.ReplaceAll(s, "\r\n", "\n")
+	return strings.ReplaceAll(s, "\n", "\r\n")
 }
 
 // isAllowedUpdateURL reports whether downloadURL is a legitimate self-update

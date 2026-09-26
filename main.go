@@ -78,12 +78,26 @@ func getInitScript(ua string) string {
 		// Each IIFE below is independent; without this an early throw (a WebView2
 		// API difference, a denied storage read) removes every enhancement
 		// defined after it.
-		function waRunModule(name, fn) {
 		var __MD_HOST = '';
 		try { __MD_HOST = (location.hostname || '').toLowerCase(); } catch (e) {}
 		function __MD_IS_WA() {
 			return __MD_HOST.indexOf('whatsapp') >= 0 || __MD_HOST === '';
 		}
+		// Meta internal hosts: exact match or dot-prefixed subdomain only.
+		// Prevents evilwhatsapp.com / phishingfacebook.com bypassing endsWith.
+		var __MD_META_HOSTS = ['whatsapp.com','whatsapp.net','instagram.com','cdninstagram.com','facebook.com','facebook.net','fbcdn.net','fb.com','fbsbx.com'];
+		function isMDInternalHost(host) {
+			try {
+				host = String(host || '').toLowerCase();
+				if (!host) return false;
+				for (var i = 0; i < __MD_META_HOSTS.length; i++) {
+					var d = __MD_META_HOSTS[i];
+					if (host === d || host.slice(-d.length - 1) === '.' + d) return true;
+				}
+			} catch (e) {}
+			return false;
+		}
+		function waRunModule(name, fn) {
 			try {
 				return fn();
 			} catch (e) {
@@ -643,7 +657,7 @@ func getInitScript(ua string) string {
 			if (target && target.tagName === 'A' && target.href) {
 				try {
 					var url = new URL(target.href);
-					if (!url.hostname.endsWith('whatsapp.com') && !url.hostname.endsWith('whatsapp.net') && !url.hostname.endsWith('instagram.com') && !url.hostname.endsWith('cdninstagram.com') && !url.hostname.endsWith('facebook.com') && !url.hostname.endsWith('facebook.net') && !url.hostname.endsWith('fbcdn.net') && !url.hostname.endsWith('fb.com') && !url.hostname.endsWith('fbsbx.com') && (url.protocol === 'http:' || url.protocol === 'https:')) {
+					if (!isMDInternalHost(url.hostname) && (url.protocol === 'http:' || url.protocol === 'https:')) {
 						e.preventDefault();
 						e.stopPropagation();
 						if (window.openExternalLink) {
@@ -1519,7 +1533,7 @@ func getInitScript(ua string) string {
 				}
 				try {
 					var parsed = new URL(url, window.location.href);
-					if (!parsed.hostname.endsWith('whatsapp.com') && !parsed.hostname.endsWith('whatsapp.net') && !parsed.hostname.endsWith('instagram.com') && !parsed.hostname.endsWith('cdninstagram.com') && !parsed.hostname.endsWith('facebook.com') && !parsed.hostname.endsWith('facebook.net') && !parsed.hostname.endsWith('fbcdn.net') && !parsed.hostname.endsWith('fb.com') && !parsed.hostname.endsWith('fbsbx.com') && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
+					if (!isMDInternalHost(parsed.hostname) && (parsed.protocol === 'http:' || parsed.protocol === 'https:')) {
 						if (window.openExternalLink) {
 							window.openExternalLink(parsed.href);
 							return null;
